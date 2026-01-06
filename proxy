@@ -1,0 +1,66 @@
+export default {
+  async fetch(request, env, ctx) {
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, X-API-Key, X-LLM-Provider',
+          'Access-Control-Max-Age': '86400',
+        }
+      });
+    }
+
+    // Only allow POST
+    if (request.method !== 'POST') {
+      return new Response('Method not allowed', { status: 405 });
+    }
+
+    try {
+      const apiKey = request.headers.get('X-API-Key');
+      const provider = request.headers.get('X-LLM-Provider') || 'claude';
+      
+      if (!apiKey) {
+        return jsonResponse({ error: 'API key required' }, 400);
+      }
+
+      const body = await request.json();
+      console.log(`Proxying request to ${provider}:`, body);
+
+      let response;
+
+      if (provider === 'claude') {
+        response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify(body)
+        });
+      } else {
+        return jsonResponse({ error: 'Unsupported provider' }, 400);
+      }
+
+      const data = await response.json();
+      
+      return jsonResponse(data, response.status);
+
+    } catch (error) {
+      console.error('Proxy error:', error);
+      return jsonResponse({ error: error.message }, 500);
+    }
+  }
+};
+
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    }
+  });
+}

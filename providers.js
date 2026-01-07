@@ -171,7 +171,7 @@ Return to discovery mode on that aspect
 
 When they're done:
 
-End warmly: "Thank you for exploring and uncovering this with me. Wishing you sterkte (strength, in The Netherlands) with [whatever they're working on]"
+End warmly: "Thank you for uncovering this with me. Wishing you sterkte (strength, in The Netherlands) with [whatever they're working on]"
 Keep it brief, they have what they came for
 </post_validation_behavior>`;
 

@@ -43,7 +43,7 @@ Your API key lives in your browser. Nothing to sign up for, nothing stored on a 
 
 ## Status
 
-Increment 3 complete. Currently refining the Socratic prompt so conversations feel purposeful rather than like a polite interrogation.
+Progress halted for further pondering.
 
 ---
 
